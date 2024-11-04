@@ -26,7 +26,7 @@ set(CPACK_PACKAGE_VERSION_MINOR "34")
 set(CPACK_PACKAGE_VERSION_PATCH "12")
 set(COMPLETE_VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH})
 set(RELEASE_NAME "Prizren")
-project(fygis VERSION ${COMPLETE_VERSION})
+project(qgis VERSION ${COMPLETE_VERSION})
 
 if (APPLE)
   set(QGIS_APP_NAME "FYGIS")
@@ -35,23 +35,23 @@ else()
 endif()
 
 # Note the version no is Mmmpp for Major/minor/patch, 0-padded, thus '10100' for 1.1.0
-math(EXPR FYGIS_VERSION_INT "${CPACK_PACKAGE_VERSION_MAJOR}*10000+${CPACK_PACKAGE_VERSION_MINOR}*100+${CPACK_PACKAGE_VERSION_PATCH}")
-message(STATUS "FYGIS version: ${COMPLETE_VERSION} ${RELEASE_NAME} (${FYGIS_VERSION_INT})")
+math(EXPR QGIS_VERSION_INT "${CPACK_PACKAGE_VERSION_MAJOR}*10000+${CPACK_PACKAGE_VERSION_MINOR}*100+${CPACK_PACKAGE_VERSION_PATCH}")
+message(STATUS "QGIS version: ${COMPLETE_VERSION} ${RELEASE_NAME} (${QGIS_VERSION_INT})")
 
 set (ENABLE_LOCAL_BUILD_SHORTCUTS FALSE CACHE BOOL "Disables some build steps which are only relevant for releases to speed up compilation time for development")
 
 #############################################################
 if (APPLE)
-  # FYGIS custom dependencies package from fygis/FYGIS-Mac-Packager
-  # they can be downloaded from https://fygis.org/downloads/macos/fygis-deps
-  # and extracted to /opt/FYGIS/fygis-deps-<deps-version>/stage
-  set (FYGIS_MAC_DEPS_DIR "" CACHE PATH "Path to FYGIS Mac custom dependencies directory")
+  # QGIS custom dependencies package from qgis/QGIS-Mac-Packager
+  # they can be downloaded from https://qgis.org/downloads/macos/qgis-deps
+  # and extracted to /opt/QGIS/qgis-deps-<deps-version>/stage
+  set (QGIS_MAC_DEPS_DIR "" CACHE PATH "Path to QGIS Mac custom dependencies directory")
 
   # Setup LIB_DIR and CMAKE_PREFIX_PATH to help CMake's
   # find_packages to look for these libraries instead of system libraries
-  if ( FYGIS_MAC_DEPS_DIR )
-    set(ENV{LIB_DIR} ${FYGIS_MAC_DEPS_DIR})
-    list(APPEND CMAKE_PREFIX_PATH ${FYGIS_MAC_DEPS_DIR})
+  if ( QGIS_MAC_DEPS_DIR )
+    set(ENV{LIB_DIR} ${QGIS_MAC_DEPS_DIR})
+    list(APPEND CMAKE_PREFIX_PATH ${QGIS_MAC_DEPS_DIR})
   endif()
 endif()
 
@@ -120,7 +120,7 @@ endif()
 # issue is caused by include_directories(${CMAKE_BINARY_DIR}) near the end of this file generating incorrect path
 #set (CMAKE_USE_RELATIVE_PATHS ON)
 
-set (WITH_CORE TRUE CACHE BOOL "Determines whether FYGIS core should be built.")
+set (WITH_CORE TRUE CACHE BOOL "Determines whether QGIS core should be built.")
 mark_as_advanced(WITH_CORE)
 
 if(WITH_CORE)
@@ -140,18 +140,18 @@ if(WITH_CORE)
     endif()
   endforeach (GRASS_SEARCH_VERSION)
 
-  set (WITH_GUI TRUE CACHE BOOL "Determines whether FYGIS GUI library (and everything built on top of it) should be built")
+  set (WITH_GUI TRUE CACHE BOOL "Determines whether QGIS GUI library (and everything built on top of it) should be built")
 
   set (WITH_OAUTH2_PLUGIN TRUE CACHE BOOL "Determines whether OAuth2 authentication method plugin should be built")
   if(WITH_OAUTH2_PLUGIN)
     set(HAVE_OAUTH2_PLUGIN TRUE)
   endif()
 
-  set (WITH_AUTH TRUE CACHE BOOL "Determines whether FYGIS authentication methods should be built")
+  set (WITH_AUTH TRUE CACHE BOOL "Determines whether QGIS authentication methods should be built")
 
-  set (WITH_ANALYSIS TRUE CACHE BOOL "Determines whether FYGIS analysis library should be built")
+  set (WITH_ANALYSIS TRUE CACHE BOOL "Determines whether QGIS analysis library should be built")
 
-  set (WITH_DESKTOP TRUE CACHE BOOL "Determines whether FYGIS desktop should be built")
+  set (WITH_DESKTOP TRUE CACHE BOOL "Determines whether QGIS desktop should be built")
 
   if(WITH_DESKTOP)
       if((WIN32 AND NOT MINGW) OR (UNIX AND NOT APPLE AND NOT ANDROID AND NOT IOS))
@@ -160,7 +160,7 @@ if(WITH_CORE)
 	set (CRASH_HANDLER_AVAILABLE FALSE)
       endif()
 
-      set (WITH_CRASH_HANDLER ${CRASH_HANDLER_AVAILABLE} CACHE BOOL "Determines whether the FYGIS crash handler application should be built")
+      set (WITH_CRASH_HANDLER ${CRASH_HANDLER_AVAILABLE} CACHE BOOL "Determines whether the QGIS crash handler application should be built")
       if(WITH_CRASH_HANDLER AND NOT CRASH_HANDLER_AVAILABLE)
 	message(FATAL_ERROR "Crash handler cannot be built on this environment. Set WITH_CRASH_HANDLER to false.")
       endif()
@@ -171,9 +171,9 @@ if(WITH_CORE)
       endif()
   endif()
 
-  set (WITH_3D TRUE CACHE BOOL "Determines whether FYGIS 3D library should be built")
+  set (WITH_3D TRUE CACHE BOOL "Determines whether QGIS 3D library should be built")
 
-  set (WITH_QUICK FALSE CACHE BOOL "Determines whether FYGIS Quick library should be built")
+  set (WITH_QUICK FALSE CACHE BOOL "Determines whether QGIS Quick library should be built")
 
   set (WITH_QGIS_PROCESS TRUE CACHE BOOL "Determines whether the standalone \"qgis_process\" tool should be built")
 
@@ -183,30 +183,30 @@ if(WITH_CORE)
   # try to configure and build python bindings by default
   set (WITH_BINDINGS TRUE CACHE BOOL "Determines whether Python bindings should be built")
   if (WITH_BINDINGS)
-    # By default bindings will be installed only to FYGIS directory
+    # By default bindings will be installed only to QGIS directory
     # Someone might want to install it to python site-packages directory
     # as otherwise user has to use PYTHONPATH environment variable to add
-    # FYGIS bindings to package search path
+    # QGIS bindings to package search path
     set (BINDINGS_GLOBAL_INSTALL FALSE CACHE BOOL "Install bindings to global Python directory? (might need root)")
     set (SIP_GLOBAL_INSTALL FALSE CACHE BOOL "Install sip source files to system sip directory? (might need root)")
     set (WITH_STAGED_PLUGINS TRUE CACHE BOOL "Stage-install core Python plugins to run from build directory? (utilities and console are always staged)")
     set (WITH_PY_COMPILE FALSE CACHE BOOL "Determines whether Python modules in staged or installed locations should be byte-compiled")
     # concatenate QScintilla2 API files
     if (WITH_GUI)
-      set (WITH_QSCIAPI TRUE CACHE BOOL "Whether to generate PyQGIS QScintilla2 API file. (For devs) run 'make qsci-pap-src' in between FYGIS build and install to regenerate .pap file in source tree for console auto-completion.")
+      set (WITH_QSCIAPI TRUE CACHE BOOL "Whether to generate PyQGIS QScintilla2 API file. (For devs) run 'make qsci-pap-src' in between QGIS build and install to regenerate .pap file in source tree for console auto-completion.")
       # keep casual users from updating their source tree via WITH_QSCIAPI
       mark_as_advanced (WITH_QSCIAPI)
     endif()
   endif()
 
   # server disabled default because it needs FastCGI (which is optional dependency)
-  set (WITH_SERVER FALSE CACHE BOOL "Determines whether FYGIS server should be built")
+  set (WITH_SERVER FALSE CACHE BOOL "Determines whether QGIS server should be built")
   if(WITH_SERVER)
-    set (WITH_SERVER_LANDINGPAGE_WEBAPP FALSE CACHE BOOL "Determines whether FYGIS server landingpage webapp should be built (requires nodejs and yarn)")
+    set (WITH_SERVER_LANDINGPAGE_WEBAPP FALSE CACHE BOOL "Determines whether QGIS server landingpage webapp should be built (requires nodejs and yarn)")
 
-    set (SERVER_SKIP_ECW FALSE CACHE BOOL "Determines whether FYGIS server should disable ECW (ECW in server apps requires a special license)")
+    set (SERVER_SKIP_ECW FALSE CACHE BOOL "Determines whether QGIS server should disable ECW (ECW in server apps requires a special license)")
 
-    set (WITH_SERVER_PLUGINS ${WITH_BINDINGS} CACHE BOOL "Determines whether FYGIS server support for Python plugins should be built")
+    set (WITH_SERVER_PLUGINS ${WITH_BINDINGS} CACHE BOOL "Determines whether QGIS server support for Python plugins should be built")
     if(WITH_SERVER_PLUGINS AND NOT WITH_BINDINGS)
       message(FATAL_ERROR "Server plugins are not supported without Python bindings. Enable WITH_BINDINGS or disable WITH_SERVER_PLUGINS")
     endif()
@@ -216,7 +216,7 @@ if(WITH_CORE)
   endif()
 
   # Custom widgets
-  set (WITH_CUSTOM_WIDGETS FALSE CACHE BOOL "Determines whether FYGIS custom widgets for Qt Designer should be built")
+  set (WITH_CUSTOM_WIDGETS FALSE CACHE BOOL "Determines whether QGIS custom widgets for Qt Designer should be built")
 
   if (NOT WITH_GUI)
     set (HAVE_GUI FALSE)    # used in qgsconfig.h
@@ -240,8 +240,8 @@ if(WITH_CORE)
   endif()
 
   if ( WITH_DESKTOP )
-    # The qgis_desktop target is meant to build a minimal but complete running FYGIS during development
-    # This should help to reduce compile time while still having a "complete enough" FYGIS for most of the development
+    # The qgis_desktop target is meant to build a minimal but complete running QGIS during development
+    # This should help to reduce compile time while still having a "complete enough" QGIS for most of the development
     add_custom_target(qgis_desktop
       DEPENDS qgis qgispython pycore pygui pyanalysis provider_postgres staged-plugins pyplugin-installer resources svg doc icons
     )
@@ -305,7 +305,7 @@ if(WITH_CORE)
     # https://sourceforge.net/p/mingw-w64/bugs/527/
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80816
 
-    # also OpenBSD has no thread_local support, see https://github.com/fygis/FYGIS/issues/25248
+    # also OpenBSD has no thread_local support, see https://github.com/qgis/QGIS/issues/25248
 
   else()
     if (WITH_THREAD_LOCAL)
@@ -842,7 +842,7 @@ if (WITH_CORE)
       set (CMAKE_INSTALL_PREFIX ${QGIS_MACAPP_PREFIX}/MacOS)
       # 5 bundling levels, each includes previous
       #  -1  nothing
-      #   0  fixup the library paths for all FYGIS libraries with @loader_path
+      #   0  fixup the library paths for all QGIS libraries with @loader_path
       #   1  Qt frameworks
       #   2  non-system libraries, "standard"
       #   3  non-system frameworks, "standalone"
@@ -953,14 +953,14 @@ endif()
 
 #############################################################
 # user-changeable settings which can be used to customize
-# layout of FYGIS installation
+# layout of QGIS installation
 # (default values are platform-specific)
 
 set (QGIS_BIN_SUBDIR     ${DEFAULT_BIN_SUBDIR}     CACHE STRING "Subdirectory where executables will be installed")
 set (QGIS_CGIBIN_SUBDIR  ${DEFAULT_CGIBIN_SUBDIR}  CACHE STRING "Subdirectory where CGI executables will be installed")
 set (QGIS_LIB_SUBDIR     ${DEFAULT_LIB_SUBDIR}     CACHE STRING "Subdirectory where libraries will be installed")
 set (QGIS_LIBEXEC_SUBDIR ${DEFAULT_LIBEXEC_SUBDIR} CACHE STRING "Subdirectory where private executables will be installed")
-set (QGIS_DATA_SUBDIR    ${DEFAULT_DATA_SUBDIR}    CACHE STRING "Subdirectory where FYGIS data will be installed")
+set (QGIS_DATA_SUBDIR    ${DEFAULT_DATA_SUBDIR}    CACHE STRING "Subdirectory where QGIS data will be installed")
 set (QGIS_PLUGIN_SUBDIR  ${DEFAULT_PLUGIN_SUBDIR}  CACHE STRING "Subdirectory where plugins will be installed")
 set (QGIS_INCLUDE_SUBDIR ${DEFAULT_INCLUDE_SUBDIR} CACHE STRING "Subdirectory where header files will be installed")
 set (QGIS_QML_SUBDIR     ${DEFAULT_QML_SUBDIR}     CACHE STRING "Subdirectory where qml files/libraries will be installed")
@@ -990,7 +990,7 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${QGIS_OUTPUT_DIRECTORY}/${QGIS_BIN_SUBDIR})
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${QGIS_OUTPUT_DIRECTORY}/${QGIS_LIB_SUBDIR})
 
 # write a marker with source directory path into the output's bin directory
-# if run from the build directory FYGIS will detect it and alter the paths
+# if run from the build directory QGIS will detect it and alter the paths
 file(WRITE ${QGIS_OUTPUT_DIRECTORY}/${QGIS_BIN_SUBDIR}/qgisbuildpath.txt "${CMAKE_SOURCE_DIR}\n${QGIS_OUTPUT_DIRECTORY}")
 
 # manual page - makes sense only on unix systems
@@ -1001,7 +1001,7 @@ if (UNIX AND NOT APPLE)
   set (QGIS_MANUAL_DIR  ${CMAKE_INSTALL_PREFIX}/${QGIS_MANUAL_SUBDIR})
 endif()
 
-set (DISABLE_DEPRECATED FALSE CACHE BOOL "If set to true, it will disable deprecated functionality to prepare for the next generation of FYGIS")
+set (DISABLE_DEPRECATED FALSE CACHE BOOL "If set to true, it will disable deprecated functionality to prepare for the next generation of QGIS")
 if (DISABLE_DEPRECATED)
   add_definitions(-DQGIS_DISABLE_DEPRECATED)
 endif()
@@ -1023,7 +1023,7 @@ else()
 endif()
 
 # Fix python site-packages for Fedora
-# See https://github.com/fygis/FYGIS/issues/54348#issuecomment-1694216152
+# See https://github.com/qgis/QGIS/issues/54348#issuecomment-1694216152
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
   if(EXISTS "/etc/fedora-release")
     EXECUTE_PROCESS(COMMAND ${Python_EXECUTABLE} -c "import sysconfig;print(sysconfig.get_path(\"platlib\", \"rpm_prefix\"), end=\"\")" OUTPUT_VARIABLE Python_SITEARCH)
@@ -1130,7 +1130,7 @@ if (WITH_CORE)
     # must be last for install, so install_name_tool can do its work
     add_subdirectory(mac)
 
-    # allow FYGIS to be run directly from build directory and to run unit tests
+    # allow QGIS to be run directly from build directory and to run unit tests
     execute_process(COMMAND /bin/mkdir -p "${QGIS_OUTPUT_DIRECTORY}/lib")
     execute_process(
       COMMAND /bin/ln -fs ../../Plugins/qgis/qgisgrass6.framework lib/
@@ -1190,28 +1190,28 @@ if (WITH_CORE)
     include(InstallRequiredSystemLibraries)
   endif()
 
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FYGIS")
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "QGIS")
   set(CPACK_PACKAGE_VENDOR "Open Source Geospatial Foundation")
   set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
   set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "FYGIS ${COMPLETE_VERSION}")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "QGIS ${COMPLETE_VERSION}")
   if(WIN32 AND NOT UNIX)
     # There is a bug in NSI that does not handle full unix paths properly. Make
     # sure there is at least one set of four (4) backslashes.
     set(CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/win_build\\\\sidebar.bmp")
-    set(CPACK_NSIS_INSTALLED_ICON_NAME "\\\\fygis.exe")
-    set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} FYGIS")
-    set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\fygis.org")
-    set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\fygis.org")
-    set(CPACK_NSIS_CONTACT "info@fygis.org")
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "\\\\qgis.exe")
+    set(CPACK_NSIS_DISPLAY_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} QGIS")
+    set(CPACK_NSIS_HELP_LINK "http:\\\\\\\\qgis.org")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\qgis.org")
+    set(CPACK_NSIS_CONTACT "info@qgis.org")
     set(CPACK_NSIS_MODIFY_PATH ON)
 
   #  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "  !include \\\"${CMAKE_SOURCE_DIR}\\\\win_build\\\\extra.nsh\\\"")
   else()
-    #set(CPACK_STRIP_FILES "FYGIS")
+    #set(CPACK_STRIP_FILES "QGIS")
     #set(CPACK_SOURCE_STRIP_FILES "")
   endif()
-  set(CPACK_PACKAGE_EXECUTABLES "fygis" "FYGIS")
+  set(CPACK_PACKAGE_EXECUTABLES "qgis" "QGIS")
   set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}/README.md")
   include(CPack)
 endif()
